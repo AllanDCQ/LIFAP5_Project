@@ -1,7 +1,7 @@
 /* ******************************************************************
  * Constantes de configuration
  * ****************************************************************** */
-//const apiKey = "92dde843-d12d-4af5-9cf9-4baf0a403510";
+const apiKey = "92dde843-d12d-4af5-9cf9-4baf0a403510";
 const serverUrl = "https://lifap5.univ-lyon1.fr/";
 
 /* ******************************************************************
@@ -14,7 +14,7 @@ const serverUrl = "https://lifap5.univ-lyon1.fr/";
  * @returns une promesse du login utilisateur ou du message d'erreur
  */
  function fetchWhoami(apiKey) {
-  return fetch(serverUrl + "whoami", { headers: { "Api-Key" : apiKey } }) 
+  return fetch(serverUrl + "whoami", { headers: { "Api-Key" : apiKey } })
     .then((response) => {
       if (response.status === 401) {
         return response.json().then((json) => {
@@ -39,14 +39,14 @@ const serverUrl = "https://lifap5.univ-lyon1.fr/";
  function lanceWhoamiEtInsereLogin(apiKey, etatCourant) {
   return fetchWhoami(apiKey).then((data) => {
     majEtatEtPage(etatCourant, {
-      login: data.user, // qui vaut undefined en cas d'erreur
-      errLogin: data.err, // qui vaut undefined si tout va bien
-      loginModal: false, // on affiche la modale, ici mise à false pour que la fenetre se ferme
-      //apiKey: undefined,
-      //connected: false */
+      login: data.user, // undefined en cas d'erreur
+      errLogin: data.err, // undefined si ok
+      loginModal: false, 
+
     });
   });
 }
+
 
 /**
  * Génère le code HTML du corps de la modale de login. On renvoie en plus un
@@ -68,7 +68,7 @@ const serverUrl = "https://lifap5.univ-lyon1.fr/";
       <section class="modal-card-body">
         <div class="field">
           <label class="label">Clé d'API</label>
-          <input type="password" id="loginKey" class="input" placeholder="veuillez insérer votre clé">
+          <input type="password" id="loginKey" class="input" placeholder="veuillez inscrire votre id">
         </div>
       </section>`
     ,
@@ -80,6 +80,7 @@ const serverUrl = "https://lifap5.univ-lyon1.fr/";
     }
   }
 }
+
 
 /**
  * Génère le code HTML du titre de la modale de login et les callbacks associés.
@@ -108,6 +109,7 @@ function genereModaleLoginHeader(etatCourant) {
 }
 
 
+
 /**
  * Génère le code HTML du base de page de la modale de login et les callbacks associés.
  *
@@ -115,7 +117,7 @@ function genereModaleLoginHeader(etatCourant) {
  * @returns un objet contenant le code HTML dans le champ html et la description
  * des callbacks à enregistrer dans le champ callbacks
  */
- function genereModaleLoginFooter(etatCourant){
+function genereModaleLoginFooter(etatCourant){
   return {
     html: `
       <footer class="modal-card-foot" style="justify-content: flex-end">
@@ -124,7 +126,8 @@ function genereModaleLoginHeader(etatCourant) {
       </footer>`
     ,
     callbacks: {
-      "btn-close-login-modal2": { onclick: () => majEtatEtPage(etatCourant, {loginModal: false, login: undefined })},
+      "btn-close-login-modal2": { onclick: () => 
+        majEtatEtPage(etatCourant, {loginModal: false, login: undefined })},
       "submit-api-key" : { 
           onclick : () => {
             const loginKey = document.getElementById('login-key').value; // récupération du champ api key
@@ -135,6 +138,7 @@ function genereModaleLoginHeader(etatCourant) {
     },
   };
 }
+
 
 function showUser(etatCourant){
   const html=`
@@ -185,8 +189,8 @@ function genereModaleLogin(etatCourant) {
  * modale de login soit affichée
  * @param {Etat} etatCourant
  */
-function afficheModaleConnexion(etatCourant) {
- majEtatEtPage(etatCourant, {loginModal:true});
+ function afficheModaleConnexion(etatCourant) {
+  majEtatEtPage(etatCourant, {loginModal: true});
 }
 
 /**
@@ -197,40 +201,31 @@ function afficheModaleConnexion(etatCourant) {
  * des callbacks à enregistrer dans le champ callbacks
  */
 function genereBoutonConnexion(etatCourant) {
-  etatCourant.login === undefined ? "Connexion" : "Deconnexion"; 
-    const html = `
-      <div class="navbar-item">
 
-        <button class="button is-info" id="btn-open-login-modal" >
-          <span class="icon is-small" padding="15px">
-            <i class="fas fa-user" alt="connexion" ></i>
-          </span>
-          <span>Connexion</span>
-        </button>
+  const boutonLogin =
+        etatCourant.login === undefined ? "Connexion" : "Deconnexion";
+  const html = `
+    <div class="navbar-item">
+
+      <button class="button is-info" id="btn-open-login-modal" >
+        <span class="icon is-small" padding="15px">
+          <i class="fas fa-user" alt="${boutonLogin}" ></i>
+        </span>
+        <span>${boutonLogin}</span>
+      </button>
 
 
 
-      </div>`;
+    </div>`;
   return {
     html: html,
     callbacks: {
       "btn-open-login-modal": {
-        onclick: () => etatCourant.login ===undefined ? afficheModaleConnexion(etatCourant) :majEtatEtPage(etatCourant, {login:undefined})
+        onclick: ()=> etatCourant.login === undefined 
+                      ? afficheModaleConnexion(etatCourant) 
+                      : majEtatEtPage(etatCourant, {login:undefined}),
       },
     },
-  };
-}
-
-function AfficheUtilisateur(etatCourant){
-  const html=`
-  <div class="navbar-end">
-    <div class="navbar-item">
-      <a id="btn-open-login-modal" class="button is-light"> ${etatCourant.login} </a>
-    </div>
-  </div>`;
-  return {
-    html:html,
-    callbacks:{}
   };
 }
 
@@ -243,7 +238,7 @@ function AfficheUtilisateur(etatCourant){
 function genereBarreNavigation(etatCourant) {
   const connexion = genereBoutonConnexion(etatCourant);
   const searchBarH = searchBar(etatCourant);
-  const id = etatCourant.login!==undefined ? AfficheUtilisateur(etatCourant).html:'';
+  const id = etatCourant.login!==undefined ? showUser(etatCourant).html:'';
   return {
     html: `
 <balise id="hautDePage"></balise>
@@ -282,6 +277,7 @@ function genereBarreNavigation(etatCourant) {
     },
   };
 }
+
 
 
 
@@ -405,25 +401,20 @@ function initClientPokemons() {
     // Pokemon selected
     selectedPokemon : undefined,
 
-    selectedPokemonName : 'Abra',
-
     // nb de pokemon a afficher
     pokemonAff : 10,
 
     // input de la barre de recherche
     searchName : '',
 
-
-    deck_list : [],
     //deck de l'utilisateur
-    deck_pokemons : [],
+    deck_pokemons : undefined,
 
     //page selectionne
     pageSelected : "all-pokemons"
     
   };
   charge_pokemons(etatInitial);
-  charge_deck(etatInitial);
   majPage(etatInitial); 
 
 }
@@ -451,10 +442,10 @@ function charge_pokemons(etatCourant) {
 
   return fetch(baseUrl+'/pokemon')
       .then(reponse => {return reponse.json()})
-      .then(pokemons => {majEtatEtPage(etatCourant,{pokemons:pokemons.sort(triPokemonsNumber(pokemons,etatCourant)), 
-                                                    selectedPokemon: pokemons[0]})})
+      .then(pokemons => {majEtatEtPage(
+        etatCourant,{pokemons:pokemons.sort(triPokemonsNumber(pokemons,etatCourant)), 
+                     selectedPokemon: pokemons[1-1]})})
 }
-
 
 
 
@@ -464,33 +455,25 @@ function charge_pokemons(etatCourant) {
  * @param {Etat} etatCourant : l'état courant                      *
  *******************************************************************/
  function charge_deck(etatCourant) {
-  console.log("function charge_donnees() ...")
+  const Key = "92dde843-d12d-4af5-9cf9-4baf0a403510";
+  console.log("function charge_deck() ...")
 
-  return fetch(baseUrl+'/deck/'+ etatCourant.apiKey)
+  return fetch(baseUrl + "/deck/"+ etatCourant.login,{headers:{"Api-Key":Key}})
       .then(reponse => {return reponse.json()})
-      .then(deck => {majEtatEtPage(etatCourant,{deck_list:deck,})})
+      .then(deck => {majEtatEtPage(etatCourant,{deck_pokemons: deck.map(pokemon => etatCourant.pokemons[pokemon-1]), 
+                                                selectedPokemon : etatCourant.pokemons[deck[0]-1],
+                                                pageSelected : "deck-pokemons",}), 
+                                                isActiveAdd("deck-pokemons"), 
+                                                isActiveRemove("all-pokemons")})
 }
 
-// function traductionDeck(etatCourant) {
-//   return etatCourant.deck_list.map(numPokemon => addPokemonDeck(numPokemon, etatCourant));
-// }
-
-// function addPokemonDeck(numPokemon, etatCourant) {
-
-//   numPokemon == etatCourant.pokemon.map(pokemon => pokemon.PokedexNumber)
-//     ? majEtatEtPage(etatCourant, {deck_pokemons: deck_pokemons + pokemons[pokemon]})
-//     : null
-// }
-
-// function removePokemonDeck(numPokemon, etatCourant) {
-
-// }
 
 
 
 /*******************************************************************
  *                   @function headerSectionPokedex                *
  * @returns le header html de la section pokedex                   *
+ * @param {Etat} etatCourant : l'état courant                      *
  *******************************************************************/
 function headerSectionPokedex(etatCourant){
 
@@ -501,7 +484,7 @@ function headerSectionPokedex(etatCourant){
           <div class="column">
             <div class="tabs is-centered">
               <ul>
-                <li id="all-pokemons" class="is-active">
+                <li id="all-pokemons">
                   <a>Tous les pokemons</a>
                 </li>
                 <li id="deck-pokemons">
@@ -513,16 +496,20 @@ function headerSectionPokedex(etatCourant){
         </div>
     `,
     callbacks: {
-      "all-pokemons" : {onclick: () => majEtatEtPage(etatCourant,{pageSelected : "all-pokemons", pokemonAff : 10}) 
-                                      + isActiveAdd("all-pokemons")
-                                      + isActiveRemove("deck-pokemons")},
-      "deck-pokemons" : {onclick: () => majEtatEtPage(etatCourant,{pageSelected : "deck-pokemons", pokemonAff : 10}) 
-                                      + isActiveAdd("deck-pokemons")
-                                      + isActiveRemove("all-pokemons")}
+      "all-pokemons" : {onclick: () => {majEtatEtPage(etatCourant,{pageSelected : "all-pokemons", pokemonAff : 10}), 
+                                      isActiveAdd("all-pokemons"),
+                                      isActiveRemove("deck-pokemons")}},
+      "deck-pokemons" : {onclick: () => charge_deck(etatCourant)}
     }
   };
 }
 
+
+/*******************************************************************
+ *                     @function isActiveAdd                       *
+ * @returns le header html de la section pokedex                   *
+ * @param  {Character} add : page selected                         *
+ *******************************************************************/
 function isActiveAdd (add) {
   const getAdd = document.getElementById(add).classList;
 
@@ -530,7 +517,11 @@ function isActiveAdd (add) {
     ? null
     : getAdd.add("is-active")
 }
-
+/*******************************************************************
+ *                     @function isActiveAdd                       *
+ * @returns le header html de la section pokedex                   *
+ * @param  {Character} remove : page selected                      *
+ *******************************************************************/
 function isActiveRemove (remove) {
   const getRemove = document.getElementById(remove).classList;
 
@@ -569,46 +560,76 @@ function afficherPokemons(etatCourant){
  * @param {Etat} etatCourant : l'état courant                                                              *
  *                                                                                                         *
  * @constant pokemons : cible les pokemons sur l'état courant chargé auparavant du .json                   * 
- * @constant {characters} Ordersens : (characters) Retourne le sens du tri : 'Croissant' ou 'Decroissant'  *
- *      --> utilisé dans le .html pour définir le sens du tri : 'Croissant' ou 'Decroissant' avec sort()   *
+ * @constant {characters} pokemonAff : Retourne le nb de pokemon affiches de l'etat courant                *
  ***********************************************************************************************************/
 function createTable(etatCourant) {
   const pokemons = etatCourant.pokemons === undefined?[]:etatCourant.pokemons;
+  const deck = etatCourant.deck_pokemons === undefined?[]:etatCourant.deck_pokemons;
   const pokemonAff = etatCourant.pokemonAff;
+  const selected = etatCourant.pageSelected;
 
   return {
     html: initialisationTable(etatCourant).html + tableBouttons(pokemonAff,etatCourant).html,
 
     callbacks :{ 
-      "sortNumber" : {onclick: () =>  majEtatEtPage(etatCourant,{pokemons : pokemons.sort(triPokemonsNumber(pokemons,etatCourant)), pokemonAff : 10})
+      "sortNumber":{onclick: () =>  majEtatEtPage(etatCourant,{pokemons: selected=='all-pokemons'
+                                                                          ?pokemons.sort(triPokemonsNumber(pokemons,etatCourant))
+                                                                          :deck.sort(triPokemonsNumber(deck,etatCourant))})
                                       + sens('Number',etatCourant) 
-                                      + sort('Number', etatCourant) },
+                                      + sort('Number', etatCourant)
+                                      + isActiveAdd(etatCourant.pageSelected)},
 
-      "sortName" : {onclick: () => majEtatEtPage(etatCourant,{pokemons : pokemons.sort(triPokemonsName(pokemons,etatCourant)), pokemonAff : 10})
+      "sortName":{onclick: () => majEtatEtPage(etatCourant,{pokemons: selected=='all-pokemons'
+                                                                        ?pokemons.sort(triPokemonsName(pokemons,etatCourant))
+                                                                        :deck.sort(triPokemonsName(deck,etatCourant))})
                                    + sens('Name',etatCourant) 
-                                   + sort('Name', etatCourant)},
+                                   + sort('Name', etatCourant)
+                                   + isActiveAdd(etatCourant.pageSelected)},
 
-      "sortAbilities" : {onclick: () => majEtatEtPage(etatCourant,{pokemons : pokemons.sort(triPokemonsAbilities(pokemons,etatCourant)), pokemonAff : 10})
+      "sortAbilities":{onclick: () => majEtatEtPage(etatCourant,{pokemons: selected=='all-pokemons'
+                                                                            ?pokemons.sort(triPokemonsAbilities(pokemons,etatCourant))
+                                                                            :deck.sort(triPokemonsAbilities(deck,etatCourant))})
                                       + sens('Abilities',etatCourant) 
-                                      + sort('Abilities', etatCourant)},
+                                      + sort('Abilities', etatCourant)
+                                      + isActiveAdd(etatCourant.pageSelected)},
 
-      "sortTypes" : {onclick: () => majEtatEtPage(etatCourant,{pokemons : pokemons.sort(triPokemonsTypes(pokemons,etatCourant)), pokemonAff : 10})
+      "sortTypes":{onclick: () => majEtatEtPage(etatCourant,{pokemons: selected=='all-pokemons'
+                                                                          ?pokemons.sort(triPokemonsTypes(pokemons,etatCourant))
+                                                                          :deck.sort(triPokemonsTypes(deck,etatCourant))})
                                   + sens('Types',etatCourant) 
-                                  + sort('Types', etatCourant)},
+                                  + sort('Types', etatCourant)
+                                  + isActiveAdd(etatCourant.pageSelected)},
                                 
       "lessPokemons" : {onclick: () => lessPokemons(etatCourant,pokemonAff) },
       "morePokemons" : {onclick: () => morePokemons(etatCourant,pokemonAff)},
-      ...initialisationTable(etatCourant).callbacks
+      ...initialisationTable(etatCourant).callbacks,
 
     }
   };
 }
 
- 
-function lessPokemons(etatCourant,pokemonAff) {
-  return majEtatEtPage(etatCourant, {pokemonAff : pokemonAff >10 ?pokemonAff-10 :pokemonAff} );
-}
 
+/**********************************************************************************************
+ *                                    @function lessPokemons                                  *
+ * @returns moins de pokemons                                                                 *
+ *                                                                                            *
+ * @param {Etat} etatCourant : l'état courant                                                 *
+ * @param {characters} pokemonAff : Retourne le nb de pokemon affiches de l'etat courant      *
+ **********************************************************************************************/
+function lessPokemons(etatCourant,pokemonAff) {
+  return majEtatEtPage(etatCourant, {pokemonAff : pokemonAff >10 
+                                                    ?(pokemonAff-10) > 10
+                                                      ? pokemonAff-10
+                                                      : 10
+                                                    :pokemonAff} );
+}
+/**********************************************************************************************
+ *                                    @function morePokemons                                  *
+ * @returns plus de pokemons                                                                  *
+ *                                                                                            *
+ * @param {Etat} etatCourant : l'état courant                                                 *
+ * @param {characters} pokemonAff : Retourne le nb de pokemon affiches de l'etat courant      *
+ **********************************************************************************************/
 function morePokemons(etatCourant,pokemonAff) {
   const nb_max = etatCourant.pageSelected == 'all-pokemons'
                   ?Object.keys(etatCourant.pokemons).length
@@ -630,49 +651,87 @@ function morePokemons(etatCourant,pokemonAff) {
  * @param {Etat} etatCourant : l'état courant                                                              *
  *                                                                                                         *
  * @constant pokemons : Retourne les pokemons recuperer du .json                                           * 
- * @constant {characters} Ordersens : Retourne le sens du tri : 'Croissant' ou 'Decroissant'               *
+ * @constant  deck : Retourne les pokemons du deck                                                         *
+ * @constant {characters} activePage : Retourne le nom de la page active                                   *
  * @constant {characters} pokemonAff : Retourne le nb de pokemon affiches de l'etat courant                *
  ***********************************************************************************************************/
  function initialisationTable(etatCourant) {
   const pokemons = etatCourant.pokemons === undefined?[]:etatCourant.pokemons;
   const pokemonAff = etatCourant.pokemonAff;
-  return {
-    html: 
-`<div class= "columns">
+  const deck = etatCourant.deck_pokemons === undefined?[]:etatCourant.deck_pokemons;
+  const activePage = etatCourant.pageSelected;
+
+  const html = 
+  `<div class= "columns">
   <div class="column" style="padding-left:30px;">
     <table id="PokemonTable" class="table">
       <thead>
         <tr>
-          <th><span>Image</span></th>
-          <th style="cursor: pointer;">
-            <span id = "sortNumber">#</span>
-            <span class="icon"><i id = "iconNumber"></i></span>
-          </th>
-          <th style="cursor: pointer;">
-            <span id = "sortName" >Name</span>
-            <span class="icon"><i id = "iconName"></i></span>
-          </th>
-          <th style="cursor: pointer;">
-            <span id = "sortAbilities" >Abilities</span>
-            <span class="icon"><i id = "iconAbilities"></i></span>
-          </th>
-          <th style="cursor: pointer;">
-            <span id = "sortTypes" >Types
-            <span class="icon"><i id = "iconTypes"></i></span></span>
-          </th>
+          ${headerTable()}
         </tr>
       </thead>
       <tbody id="tbody">
-        ${pokemons.map(item => ligne_pokemon(item,etatCourant).html).slice(0, pokemonAff).join('')}
+        ${activePage === 'all-pokemons'
+            ?pokemons.map((item) => ligne_pokemon(item,etatCourant).html)
+                     .slice(0, pokemonAff).join('')
+            :deck.map((item) => ligne_pokemon(item,etatCourant).html)
+                     .slice(0, pokemonAff).join('')}
       </tbody>
-    </table>
-  `,
-    callbacks : {
-      "id_2" : {onclick : () => console.log('test')},
-    }
-  };
+    </table>`;
+
+    return {
+      html: html,
+      callbacks : activePage == 'all-pokemons'
+                    ?Object.assign({}, ...pokemons.map((item) => 
+                      ligne_pokemon(item,etatCourant).callbacks).slice(0, pokemonAff))
+                    :Object.assign({}, ...deck.map((item) => 
+                      ligne_pokemon(item,etatCourant).callbacks).slice(0, pokemonAff))
+      // Object.assign({}, ligne_pokemon(pokemons[0]).callbacks, ligne_pokemon(pokemons[1]).callbacks, etc)
+    };
+  }
+
+
+/**************************************************************************************************
+ *                                      @function headerTable                                     *
+ * @returns le html du haut du tableau                                                            *
+ **************************************************************************************************/
+function headerTable() {
+  const html = 
+  `<th><span>Image</span></th>
+  <th style="cursor: pointer;">
+    <span id = "sortNumber">#</span>
+    <span class="icon"><i id = "iconNumber"></i></span>
+  </th>
+  <th style="cursor: pointer;">
+    <span id = "sortName" >Name</span>
+    <span class="icon"><i id = "iconName"></i></span>
+  </th>
+  <th style="cursor: pointer;">
+    <span id = "sortAbilities" >Abilities</span>
+    <span class="icon"><i id = "iconAbilities"></i></span>
+  </th>
+  <th style="cursor: pointer;">
+    <span id = "sortTypes" >Types
+    <span class="icon"><i id = "iconTypes"></i></span></span>
+  </th>`;
+
+  return html;
 }
 
+
+
+
+
+/***********************************************************************************************************
+ *                                        @function triPokemonsNumber                                      *
+ * @returns le tri par pokedexNumber croissant ou decroissant pour tout les pokemons ou le deck            *
+ * @param {Etat} etatCourant : l'état courant                                                              *
+ * @param pokemons : les pokemons                                                                          *
+ *                                                                                                         *
+ * @constant {characters} Ordersens : (characters) Retourne le sens du tri : 'Croissant' ou 'Decroissant'  *
+ * @constant  deck : Retourne les pokemons du deck                                                         *
+ * @constant {characters} activePage : Retourne le nom de la page active                                   *
+ ***********************************************************************************************************/
 function triPokemonsNumber(pokemons, etatCourant) {
   const orderSens = etatCourant.orderSens;
   const deck = etatCourant.deck_pokemons === undefined?[]:etatCourant.deck_pokemons;
@@ -687,7 +746,16 @@ function triPokemonsNumber(pokemons, etatCourant) {
       ? pokemons.sort(function (a,b) { return b.PokedexNumber-a.PokedexNumber; })
       : deck.sort(function (a,b) { return b.PokedexNumber-a.PokedexNumber; })
 }
-
+/***********************************************************************************************************
+ *                                        @function triPokemonsName                                        *
+ * @returns le tri par Name croissant ou decroissant pour tout les pokemons ou le deck                     *
+ * @param {Etat} etatCourant : l'état courant                                                              *
+ * @param pokemons : les pokemons                                                                          *
+ *                                                                                                         *
+ * @constant {characters} Ordersens : (characters) Retourne le sens du tri : 'Croissant' ou 'Decroissant'  *
+ * @constant  deck : Retourne les pokemons du deck                                                         *
+ * @constant {characters} activePage : Retourne le nom de la page active                                   *
+ ***********************************************************************************************************/
 function triPokemonsName(pokemons, etatCourant) {
   const orderSens = etatCourant.orderSens;
   const deck = etatCourant.deck_pokemons === undefined?[]:etatCourant.deck_pokemons;
@@ -702,7 +770,16 @@ function triPokemonsName(pokemons, etatCourant) {
       ? pokemons.sort(function (a,b) { return a.Name < b.Name; })
       : deck.sort(function (a,b) { return a.Name < b.Name; })
 }
-
+/***********************************************************************************************************
+ *                                         @function triPokemonsTypes                                      *
+ * @returns le tri par Types croissant ou decroissant pour tout les pokemons ou le deck                    *
+ * @param {Etat} etatCourant : l'état courant                                                              *
+ * @param pokemons : les pokemons                                                                          *
+ *                                                                                                         *
+ * @constant {characters} Ordersens : (characters) Retourne le sens du tri : 'Croissant' ou 'Decroissant'  *
+ * @constant  deck : Retourne les pokemons du deck                                                         *
+ * @constant {characters} activePage : Retourne le nom de la page active                                   *
+ ***********************************************************************************************************/
 function triPokemonsTypes(pokemons, etatCourant) {
   const orderSens = etatCourant.orderSens;
   const deck = etatCourant.deck_pokemons === undefined?[]:etatCourant.deck_pokemons;
@@ -717,7 +794,16 @@ function triPokemonsTypes(pokemons, etatCourant) {
       ? pokemons.sort(function (a,b) { return a.Types < b.Types; })
       : deck.sort(function (a,b) { return a.Types < b.Types; })
 }
-
+/***********************************************************************************************************
+ *                                      @function triPokemonsAbilities                                     *
+ * @returns le tri par Abilities croissant ou decroissant pour tout les pokemons ou le deck                *
+ * @param {Etat} etatCourant : l'état courant                                                              *
+ * @param pokemons : les pokemons                                                                          *
+ *                                                                                                         *
+ * @constant {characters} Ordersens : (characters) Retourne le sens du tri : 'Croissant' ou 'Decroissant'  *
+ * @constant  deck : Retourne les pokemons du deck                                                         *
+ * @constant {characters} activePage : Retourne le nom de la page active                                   *
+ ***********************************************************************************************************/
 function triPokemonsAbilities(pokemons, etatCourant) {
   const orderSens = etatCourant.orderSens;
   const deck = etatCourant.deck_pokemons === undefined?[]:etatCourant.deck_pokemons;
@@ -737,9 +823,6 @@ function triPokemonsAbilities(pokemons, etatCourant) {
 
 
 
-
-
-
 /****************************************************************************************************************************************
  *                                                        @function ligne_pokemon                                                       *
  * @returns la ligne du pokemon 'item' selon l'odre                                                                                     *
@@ -750,23 +833,32 @@ function triPokemonsAbilities(pokemons, etatCourant) {
  * @constant order : récupère l'attribut ciblé par le tri en characters et le retourne en attribut grâce à orderTypes : sinon undefined * 
  ****************************************************************************************************************************************/
 function ligne_pokemon(item,etatCourant) {
+  const num = item.PokedexNumber;
+
+  const html = `
+  <tr id="id_${item.PokedexNumber}" 
+      class="${etatCourant.selectedPokemon.Name == item.Name ? 
+      `is-selected`:null }">
+    <td><img src = "${item.Images.Detail}" 
+             alt ="Image de ${item.Name}" 
+             width="100" height="100"/></td>
+    <td id="${item.PokedexNumber}">${item.PokedexNumber}</td>
+    <td>${item.Name}</td>
+    <td>${item.Abilities.join("</br>")}</td>
+    <td>${item.Types.join("</br>")}</td>
+  </tr>`;
 
   return {
-    html:`
-      <tr "id="id_${item.PokedexNumber}" class="${etatCourant.selectedPokemon.Name == item.Name ? `is-selected`:null }">
-        <td> <img src = "${item.Images.Detail}" alt ="Image de ${item.Name}" width="100" height="100"/> </td>
-        <td id="${item.PokedexNumber}">${item.PokedexNumber}</td>
-        <td>${item.Name}</td>
-        <td>${item.Abilities.join("</br>")}</td>
-        <td>${item.Types.join("</br>")}</td>
-      </tr>`,
-
-    callbacks: {
-
+    html: html,
+    callbacks : {
+      ["id_"+num] : {onclick : () => etatCourant.pageSelected == 'all-pokemons' 
+                      ?majEtatEtPage(etatCourant,{selectedPokemon:item}) 
+                        + isActiveAdd(etatCourant.pageSelected)
+                      :majEtatEtPage(etatCourant,{selectedPokemon:item}) 
+                        + isActiveAdd(etatCourant.pageSelected)},
     }
   };
 }
-
 
 
 
@@ -827,7 +919,7 @@ function tableBouttons(pokemonAff,etatCourant) {
         <span><button class="button is-danger" id="lessPokemons">Less</button></span>
         <span class="tag is-light is-medium">
           ${pokemonAff}/${etatCourant.pageSelected == 'all-pokemons'
-                            ? Object.keys(etatCourant.pokemons).length
+                            ?Object.keys(etatCourant.pokemons).length
                             : Object.keys(etatCourant.deck_pokemons).length}
         </span>
         <span><button class="button is-success" id="morePokemons">More</button></span>
@@ -839,7 +931,6 @@ function tableBouttons(pokemonAff,etatCourant) {
   </div>`,
   };
 }
-
 
 
 
@@ -886,12 +977,10 @@ function charge_listPokemonsSearch(etatCourant) {
 
   return fetch(baseUrl+'/pokemon')
         .then(reponse => {return reponse.json()})
-        .then(pokemons => { majEtatEtPage(etatCourant, {pokemons: pokemons.filter(item => item.Name.toLowerCase().search(input.toLowerCase()) >= 0),
+        .then(pokemons => { majEtatEtPage(etatCourant, {pokemons: 
+          pokemons.filter(item => item.Name.toLowerCase().search(input.toLowerCase()) >= 0),
          searchName: input})})
 }
-
-
-
 
 
 
@@ -938,6 +1027,7 @@ function CardDetail(etatCourant){
  *                                 @function detailPokemonCard                             *
  * @returns le code html des details de la carte du pokemon slectionnee                    *  
  * @param item : pokemon selectionne                                                       *
+ * @param {Etat} etatCourant : l'état courant                                              *
  *******************************************************************************************/
 function detailPokemonCard(item,etatCourant){
   return {
@@ -953,45 +1043,70 @@ function detailPokemonCard(item,etatCourant){
       </article>
     </div>
     <div class="card-content">
-      <article class="media">
-        <div class="media-content">
-          <div class="content has-text-left">
-            <p>Hit points: ${item.Attack}</p>
-            <h3>Abilities</h3>
-              ${abilitiesList(item)}
-            <h3>Resistant against</h3>
-              ${resistanceList(item)}
-            <h3>Weak against</h3>
-              ${weakList(item)}
-          </div>
-        </div>
-        <figure class="media-right">
-          <figure class="image is-475x475">
-            <img
-              class=""
-              src="${item.Images.Full}"
-              alt="${item.Name}"
-            />
-          </figure>
-        </figure>
-      </article>
+      ${detailsCaracteristiques(item,etatCourant)}
     </div>
     <div class="card-footer">
       <article class="media">
         <div class="media-content">
-          <button id="add_deck" class="is-success button" tabindex="0">
-            Add to the deck
-          </button>
+            ${AddRemouve(item,etatCourant)}
         </div>
       </article>
     </div>
     </div>
     </div>`,
     callbacks: {
-      "add_deck" : { onclick : () => addPokemonDeck(item,etatCourant)} ,
+      "add_deck" : { onclick : () => addPokemonDeck(item)} ,
     }
   };
   
+}
+
+function AddRemouve(pokemon,etatCourant) {
+  const add = `
+    <button id="add_deck" class="is-success button" tabindex="0">
+      Add to the deck
+    </button>`
+
+  const remove = `
+    <button id="add_deck" class="is-success button" tabindex="0">
+      Remove from the deck
+    </button>`
+
+  return add;
+}
+
+
+/*******************************************************************************************
+ *                             @function detailsCaracteristiques                           *
+ * @returns le code html des caracteristiaues du pokemon                                   *  
+ * @param item : pokemon selectionne                                                       *
+ *******************************************************************************************/
+function detailsCaracteristiques(item) {
+  const html = `
+<article class="media">
+<div class="media-content">
+  <div class="content has-text-left">
+    <p>Hit points: ${item.Attack}</p>
+    <h3>Abilities</h3>
+      ${abilitiesList(item)}
+    <h3>Resistant against</h3>
+      ${resistanceList(item)}
+    <h3>Weak against</h3>
+      ${weakList(item)}
+  </div>
+</div>
+<figure class="media-right">
+  <figure class="image is-475x475">
+    <img
+      class=""
+      src="${item.Images.Full}"
+      alt="${item.Name}"
+    />
+  </figure>
+</figure>
+</article>`;
+
+return html;
 }
 
 /*******************************************************************************************
@@ -1023,44 +1138,31 @@ function typesList(pokemon){
  * @returns la liste des resistance du pokemon selectionne                                  *  
  * @param item : pokemon selectionne                                                       *
  *******************************************************************************************/
-function resistanceList(pokemon){
-    const against = Object.entries(pokemon.Against);
-    const resistance = against.filter(([key, value]) => value < 1);
-    const resistantObject = Object.fromEntries(resistance);
-    return `
-      <ul>
-        ${Object.keys(resistantObject).map((x) => `<li>${x}</li>`).join('')}
-      </ul>
-    `
+function resistanceList(item){
+  const againstArray = Object.entries(item.Against);
+  const resistant = againstArray.filter(([key, value]) => value < 1);
+  const resistantObj = Object.fromEntries(resistant);
+  return `
+    <ul>
+      ${Object.keys(resistantObj).map(pokemon => `<li>${pokemon}</li>`).join('')}
+    </ul>
+  `
 }
 /*******************************************************************************************
  *                                 @function weakList                                      *
  * @returns la liste des faiblesses du pokemon selectionne                                 *  
  * @param item : pokemon selectionne                                                       *
  *******************************************************************************************/
-function weakList(pokemon){
-  const weak = Object.entries(pokemon.Against);
-  const weakness = weak.filter(([key, value]) => value > 1);
+function weakList(item){
+  const weak = Object.entries(item.Against);
+  const weakness = weak.filter(([key,value]) => value > 1);
   const weakObject = Object.fromEntries(weakness);
   return `
     <ul>
-      ${Object.keys(weakObject).map((x) => `<li>${x}</li>`).join('')}
+      ${Object.keys(weakObject).map(pokemon => `<li>${pokemon}</li>`).join('')}
     </ul>
   `
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*****************************************************************************************
